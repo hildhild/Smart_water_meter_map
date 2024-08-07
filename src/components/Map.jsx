@@ -117,9 +117,9 @@ function Map() {
                                 className={feature.properties.name}
                                 paths={coordinates}
                                 options={{
-                                    strokeColor: "#F6610A", //viền
+                                    strokeColor: "#FD573A", //viền
                                     strokeOpacity: 1,
-                                    strokeWeight: 2,
+                                    strokeWeight: 1.6,
                                     fillColor: '#ccc', // nền
                                     fillOpacity: 0.5,     
                                 }}
@@ -131,9 +131,9 @@ function Map() {
                                 className={feature.properties.name}
                                 paths={coordinates}
                                 options={{
-                                    strokeColor: "#F6610A", //viền
+                                    strokeColor: "#FD573A", //viền
                                     strokeOpacity: 1,
-                                    strokeWeight: 2,
+                                    strokeWeight: 1.6,
                                     fillColor: '#2F85D6', // nền
                                     fillOpacity: 0.3,     
                                 }}
@@ -150,9 +150,9 @@ function Map() {
                                     className={feature.properties.name}
                                     paths={coord}
                                     options={{
-                                        strokeColor: "#F6610A", //viền
+                                        strokeColor: "#FD573A", //viền
                                         strokeOpacity: 1,
-                                        strokeWeight: 2,
+                                        strokeWeight: 1.6,
                                         fillColor: '#ccc', // nền
                                         fillOpacity: 0.5,     
                                     }}
@@ -166,9 +166,9 @@ function Map() {
                                     className={feature.properties.name}
                                     paths={coord}
                                     options={{
-                                        strokeColor: "#F6610A", //viền
+                                        strokeColor: "#FD573A", //viền
                                         strokeOpacity: 1,
-                                        strokeWeight: 2,
+                                        strokeWeight: 1.6,
                                         fillColor: '#2F85D6', // nền
                                         fillOpacity: 0.3,     
                                     }}

@@ -36,9 +36,9 @@ function Sidebar() {
     return (
         <div className="absolute right-0 w-[350px] h-[100vh] p-[14px] bg-[#ECFBFF] hidden md:block overflow-y-auto">
             <div className="py-[15px] border-b-[2px] border-[#2F85D6]">
-                <div className="flex px-[30px] pb-[30px]">
+                <div className="flex px-[10px] pb-[30px]">
                     <img src="https://cdn-icons-png.flaticon.com/512/2482/2482574.png" className="w-[50px] h-[50px]"/>
-                    <div className="text-[#2F85D6] font-semibold text-xl ml-[5px] text-center">Bản đồ Đồng hồ nước thông minh</div>
+                    <div className="text-[#2F85D6] font-semibold text-2xl ml-[5px] text-center">Bản đồ Đồng hồ nước thông minh</div>
                 </div>
                 <div className="text-right text-[14px]"><strong>Địa bàn:</strong> Thành phố Hồ Chí Minh</div>
             </div>
