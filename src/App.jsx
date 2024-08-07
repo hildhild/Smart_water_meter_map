@@ -1,9 +1,6 @@
 import { DefaultLayout } from "./components"
 
-
 function App() {
-  
-
   return (
     <DefaultLayout/>
   )

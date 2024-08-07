@@ -5,35 +5,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux';
 import { changeZoom, changeCenter } from '../redux/slices/MapSlice';
 import { changeArea } from '../redux/slices/AreaSlice';
-
-const markers = [
-    {
-        id: 1,
-        name: "Đồng hồ 1",
-        position: { lat: 10.7002, lng: 106.70221 },
-    },
-    {
-        id: 2,
-        name: "Đồng hồ 2",
-        position: { lat: 10.82302, lng: 106.62965 },
-    },
-    {
-        id: 3,
-        name: "Đồng hồ 3",
-        position: { lat: 10.82643, lng: 106.83957 },
-    },
-    {
-        id: 4,
-        name: "Đồng hồ 4",
-        position: { lat: 10.85989, lng: 106.70927 },
-    },
-    {
-        id: 5,
-        name: "Đồng hồ 5",
-        position: { lat: 11.03012, lng: 106.58904 },
-    }
-];
-
+import { waterMeter as markers } from '../data/waterMeter';
 
 function Map() {
     const center = useSelector(state => state.map.center);
@@ -70,6 +42,7 @@ function Map() {
                 setMyLng(position.coords.longitude);
             });
         }
+        
     }, []);
 
     const handleZoomChanged =  useCallback(() => {
@@ -207,7 +180,7 @@ function Map() {
                 })
             }
             {/* Đồng hồ nước */}
-            {markers.map(({ id, name, position }) => (
+            {(area == "TP Hồ Chí Minh" ? markers : markers.filter(marker => marker.area == area)).map(({ id, name, position, value, area }) => (
                 <MarkerF
                     key={id}
                     position={position}
@@ -224,6 +197,8 @@ function Map() {
                             <InfoWindowF onCloseClick={() => setActiveMarker(null)}>
                                 <div>
                                     <p>{name}</p>
+                                    <p>Lượng nước: {value} (m<sup>3</sup>)</p>
+                                    <p>Khu vực: {area}</p>
                                 </div>
                             </InfoWindowF>
                         ) 
