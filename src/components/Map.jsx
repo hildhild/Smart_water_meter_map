@@ -1,9 +1,10 @@
 import { GoogleMap, useJsApiLoader, InfoWindowF, MarkerF, PolygonF } from '@react-google-maps/api';
-import React, { useEffect, useState, useRef, useCallback, Fragment } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {geojson} from '../data/geojson';
 import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux';
 import { changeZoom, changeCenter } from '../redux/slices/MapSlice';
+import { changeArea } from '../redux/slices/AreaSlice';
 
 const markers = [
     {
@@ -88,7 +89,21 @@ function Map() {
         setActiveMarker(marker);
     };
 
-
+    const handleClickPolygon = (areaName) => {
+        const points = geojson.features.filter((feature => (feature.geometry.type == "Point" && feature.properties["@relations"])));
+        const point = points.find((feature => (feature.properties["@relations"][0].reltags.name == areaName))).geometry.coordinates;
+        dispatch(changeArea(areaName));
+        dispatch(changeCenter({
+            lat: point[1],
+            lng: point[0]
+        }));
+        if (areaName.slice(0, 4) != "Quận") {
+            dispatch(changeZoom(11));
+        }
+        else {
+            dispatch(changeZoom(13));
+        }
+    } 
 
     return isLoaded && (<div className='w-[100vw] md:w-[calc(100vw-350px)] h-[100vh] relative'>
         <GoogleMap
@@ -101,6 +116,7 @@ function Map() {
             onLoad={map => mapRef.current = map}
             onZoomChanged={handleZoomChanged}
         >
+            {/* Phân vùng */}
             {
                 geojson 
                 &&
@@ -132,8 +148,9 @@ function Map() {
                                     strokeOpacity: 1,
                                     strokeWeight: 2,
                                     fillColor: '#ccc', // nền
-                                    fillOpacity: 0.3,     
+                                    fillOpacity: 0.5,     
                                 }}
+                                onClick={() => handleClickPolygon(feature.properties.name)}
                             />
                             :
                             <PolygonF 
@@ -147,6 +164,7 @@ function Map() {
                                     fillColor: '#2F85D6', // nền
                                     fillOpacity: 0.3,     
                                 }}
+                                onClick={() => handleClickPolygon(feature.properties.name)}
                             />
                         )
                         :
@@ -163,8 +181,9 @@ function Map() {
                                         strokeOpacity: 1,
                                         strokeWeight: 2,
                                         fillColor: '#ccc', // nền
-                                        fillOpacity: 0.3,     
+                                        fillOpacity: 0.5,     
                                     }}
+                                    onClick={() => handleClickPolygon(feature.properties.name)}
                                 />
                             ) 
                             :
@@ -180,12 +199,14 @@ function Map() {
                                         fillColor: '#2F85D6', // nền
                                         fillOpacity: 0.3,     
                                     }}
+                                    onClick={() => handleClickPolygon(feature.properties.name)}
                                 />
                             ) 
                         )
                     );
                 })
             }
+            {/* Đồng hồ nước */}
             {markers.map(({ id, name, position }) => (
                 <MarkerF
                     key={id}
@@ -196,15 +217,22 @@ function Map() {
                         scaledSize: { width: 30, height: 30 }
                     }}
                 >
-                    {activeMarker === id ? (
-                        <InfoWindowF onCloseClick={() => setActiveMarker(null)}>
-                            <div>
-                                <p>{name}</p>
-                            </div>
-                        </InfoWindowF>
-                    ) : null}
+                    {
+                        activeMarker === id 
+                        ? 
+                        (
+                            <InfoWindowF onCloseClick={() => setActiveMarker(null)}>
+                                <div>
+                                    <p>{name}</p>
+                                </div>
+                            </InfoWindowF>
+                        ) 
+                        : 
+                        null
+                    }
                 </MarkerF>
             ))}
+            {/* Vị trí của tôi */}
             <MarkerF
                     position={{lat: myLat, lng: myLng}}
                     icon={{
@@ -214,7 +242,7 @@ function Map() {
             >
             </MarkerF>
         </GoogleMap>
-        <button className='absolute right-[10px] top-[calc(100vh-250px)] bg-white hover:bg-gray-100 w-[40px] h-[40px] rounded-sm grid place-content-center' onClick={handleMyPositon}>
+        <button className='absolute right-[10px] top-[calc(100vh-250px)] bg-white hover:bg-gray-100 w-[40px] h-[40px] rounded-sm grid place-content-center hover:opacity-80' onClick={handleMyPositon}>
             <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" className='w-[30px] h-[30px]'/>
         </button>
     </div>

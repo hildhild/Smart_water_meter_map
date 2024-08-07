@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { changeArea } from "../redux/slices/AreaSlice";
 import { geojson } from "../data/geojson";
 import { changeCenter, changeZoom } from "../redux/slices/MapSlice";
-
+import { areaImage } from "../data/areaImage";
 
 function Sidebar() {
     const area = useSelector(state => state.area.area);
@@ -40,7 +40,7 @@ function Sidebar() {
             </div>
             <form className="w-full">
                 <div className="text-[white] py-[15px] font-semibold text-[14px]">Khu vực:</div>
-                <select name="area" id="area" className="w-full p-[8px] outline-none cursor-pointer" defaultValue={area} onChange={handleChangeArea}>
+                <select name="area" id="area" className="w-full p-[8px] outline-none cursor-pointer" value={area} onChange={handleChangeArea}>
                     <option value={"TP Hồ Chí Minh"}>TP Hồ Chí Minh</option>
                     <option value={"Quận 1"}>Quận 1</option>
                     <option value={"Quận 3"}>Quận 3</option>
@@ -66,6 +66,9 @@ function Sidebar() {
                     <option value={"Thành phố Thủ Đức"}>Thành phố Thủ Đức</option>
                 </select>
             </form>
+            <div className="absolute bottom-[14px] right-0 w-full flex justify-center ">
+                <img src={areaImage[area]} className="w-[calc(100%-28px)] h-[180px] object-cover rounded-2xl"/>
+            </div>
             {/* <div className="w-full">
                 <div className="text-[white] py-[15px] font-semibold text-[14px]">Thông tin số lượng:</div>
                 <table className="w-full bg-white border-[1px] border-white">
