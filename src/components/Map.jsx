@@ -1,4 +1,4 @@
-import { GoogleMap, useJsApiLoader, InfoWindowF, MarkerF, PolygonF } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, InfoWindowF, MarkerF, PolygonF, PolylineF } from '@react-google-maps/api';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {geojson} from '../data/geojson';
 import { useSelector } from "react-redux";
@@ -6,6 +6,24 @@ import { useDispatch } from 'react-redux';
 import { changeZoom, changeCenter } from '../redux/slices/MapSlice';
 import { changeArea } from '../redux/slices/AreaSlice';
 import { waterMeter as markers } from '../data/waterMeter';
+
+const waterPipelineCoordinates = [
+    { lat: 10.800400, lng: 106.667789},
+    { lat: 10.799821, lng: 106.6748162 },
+    { lat: 10.805398, lng: 106.678027},
+    { lat: 10.808258, lng: 106.673684},
+    { lat: 10.808157, lng: 106.673502},
+    {lat: 10.807814, lng: 106.673938    },
+    {lat: 10.807786, lng: 106.673896},
+    {lat: 10.808121, lng: 106.673452},
+    {lat: 10.808008, lng: 106.673250},
+
+
+
+
+
+    // Thêm các tọa độ khác nếu cần
+];
 
 function Map() {
     const center = useSelector(state => state.map.center);
@@ -19,7 +37,8 @@ function Map() {
 
     const { isLoaded } = useJsApiLoader({
         id: import.meta.env.VITE_GOOGLE_MAP_API_KEY,
-        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAP_API_KEY
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAP_API_KEY,
+        language: "vi"
     })
     const handleMyPositon = () => {
         if (navigator.geolocation) {
@@ -63,6 +82,7 @@ function Map() {
     };
 
     const handleClickPolygon = (areaName) => {
+        setActiveMarker(null);
         const points = geojson.features.filter((feature => (feature.geometry.type == "Point" && feature.properties["@relations"])));
         const point = points.find((feature => (feature.properties["@relations"][0].reltags.name == areaName))).geometry.coordinates;
         dispatch(changeArea(areaName));
@@ -196,9 +216,9 @@ function Map() {
                         (
                             <InfoWindowF onCloseClick={() => setActiveMarker(null)}>
                                 <div>
-                                    <p>{name}</p>
-                                    <p>Lượng nước: {value} (m<sup>3</sup>)</p>
-                                    <p>Khu vực: {area}</p>
+                                    <p><strong>Tên: </strong>{name}</p>
+                                    <p><strong>Lượng nước: </strong>{value}(m<sup>3</sup>)</p>
+                                    <p><strong>Khu vực: </strong>{area}</p>
                                 </div>
                             </InfoWindowF>
                         ) 
@@ -207,6 +227,13 @@ function Map() {
                     }
                 </MarkerF>
             ))}
+            {/* Đường ống nước */}
+            <PolylineF
+                path={waterPipelineCoordinates}
+                options={{strokeColor: "#e60be6", //viền
+                    strokeOpacity: 1,
+                    strokeWeight: 2,}}
+            />
             {/* Vị trí của tôi */}
             <MarkerF
                     position={{lat: myLat, lng: myLng}}
