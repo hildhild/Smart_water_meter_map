@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { changeZoom, changeCenter } from '../redux/slices/MapSlice';
 import { changeArea } from '../redux/slices/AreaSlice';
 import { waterMeter as markers } from '../data/waterMeter';
+import Select from 'react-select';
 
 // const waterPipelineCoordinates = [
 //     { lat: 10.800400, lng: 106.667789},
@@ -35,6 +36,30 @@ function Map() {
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAP_API_KEY,
         language: "vi",
     })
+
+    const handleChangeArea = (e) => {
+        if (e.value != "TP Hồ Chí Minh"){
+            const points = geojson.features.filter((feature => (feature.geometry.type == "Point" && feature.properties["@relations"])));
+            const point = points.find((feature => (feature.properties["@relations"][0].reltags.name == e.value))).geometry.coordinates;
+            dispatch(changeArea(e.value));
+            dispatch(changeCenter({
+                lat: point[1],
+                lng: point[0]
+            }));
+            if (e.value.slice(0, 4) != "Quận") {
+                dispatch(changeZoom(11));
+            }
+            else {
+                dispatch(changeZoom(13));
+            }
+        }
+        else {
+            dispatch(changeArea(e.value));
+            dispatch(changeCenter({lat: 10.762622, lng: 106.660172}));
+            dispatch(changeZoom(10));
+        }
+    }
+
     const handleMyPositon = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position) => {
@@ -242,6 +267,39 @@ function Map() {
         <button className='absolute right-[10px] top-[calc(100vh-250px)] bg-white hover:bg-gray-100 w-[40px] h-[40px] rounded-sm grid place-content-center hover:opacity-80' onClick={handleMyPositon}>
             <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" className='w-[30px] h-[30px]'/>
         </button>
+        <div className="absolute w-[200px] left-[10px] top-[10px] block md:hidden">
+            <Select
+                defaultValue={{value: "TP Hồ Chí Minh", label: "TP Hồ Chí Minh"}}
+                value={{value: area, label: area}}
+                onChange={handleChangeArea}
+                styles={{control: (styles) => ({ ...styles, borderColor: '#2F85D6', borderRadius: "0px", '&:hover': {borderColor: 'blue'},}),}}
+                options={[
+                    {value: "TP Hồ Chí Minh", label: "TP Hồ Chí Minh"},
+                    {value: "Quận 1", label: "Quận 1"},
+                    {value: "Quận 3", label: "Quận 3"},
+                    {value: "Quận 4", label: "Quận 4"},
+                    {value: "Quận 5", label: "Quận 5"},
+                    {value: "Quận 6", label: "Quận 6"},
+                    {value: "Quận 7", label: "Quận 7"},
+                    {value: "Quận 8", label: "Quận 8"},
+                    {value: "Quận 10", label: "Quận 10"},
+                    {value: "Quận 11", label: "Quận 11"},
+                    {value: "Quận 12", label: "Quận 12"},
+                    {value: "Quận Tân Bình", label: "Quận Tân Bình"},
+                    {value: "Quận Bình Tân", label: "Quận Bình Tân"},
+                    {value: "Quận Bình Thạnh", label: "Quận Bình Thạnh"},
+                    {value: "Quận Tân Phú", label: "Quận Tân Phú"},
+                    {value: "Quận Gò Vấp", label: "Quận Gò Vấp"},
+                    {value: "Quận Phú Nhuận", label: "Quận Phú Nhuận"},
+                    {value: "Huyện Bình Chánh", label: "Huyện Bình Chánh"},
+                    {value: "Huyện Hóc Môn", label: "Huyện Hóc Môn"},
+                    {value: "Huyện Cần Giờ", label: "Huyện Cần Giờ"},
+                    {value: "Huyện Củ Chi", label: "Huyện Củ Chi"},
+                    {value: "Huyện Nhà Bè", label: "Huyện Nhà Bè"},
+                    {value: "Thành phố Thủ Đức", label: "Thành phố Thủ Đức"},
+                ]}
+            />
+        </div>
     </div>
         
     )
