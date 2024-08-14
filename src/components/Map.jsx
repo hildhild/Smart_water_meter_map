@@ -7,23 +7,18 @@ import { changeZoom, changeCenter } from '../redux/slices/MapSlice';
 import { changeArea } from '../redux/slices/AreaSlice';
 import { waterMeter as markers } from '../data/waterMeter';
 
-const waterPipelineCoordinates = [
-    { lat: 10.800400, lng: 106.667789},
-    { lat: 10.799821, lng: 106.6748162 },
-    { lat: 10.805398, lng: 106.678027},
-    { lat: 10.808258, lng: 106.673684},
-    { lat: 10.808157, lng: 106.673502},
-    {lat: 10.807814, lng: 106.673938    },
-    {lat: 10.807786, lng: 106.673896},
-    {lat: 10.808121, lng: 106.673452},
-    {lat: 10.808008, lng: 106.673250},
-
-
-
-
-
-    // Thêm các tọa độ khác nếu cần
-];
+// const waterPipelineCoordinates = [
+//     { lat: 10.800400, lng: 106.667789},
+//     { lat: 10.799821, lng: 106.6748162 },
+//     { lat: 10.805398, lng: 106.678027},
+//     { lat: 10.808258, lng: 106.673684},
+//     { lat: 10.808157, lng: 106.673502},
+//     {lat: 10.807814, lng: 106.673938    },
+//     {lat: 10.807786, lng: 106.673896},
+//     {lat: 10.808121, lng: 106.673452},
+//     {lat: 10.808008, lng: 106.673250},
+//     // Thêm các tọa độ khác nếu cần
+// ];
 
 function Map() {
     const center = useSelector(state => state.map.center);
@@ -228,12 +223,12 @@ function Map() {
                 </MarkerF>
             ))}
             {/* Đường ống nước */}
-            <PolylineF
+            {/* <PolylineF
                 path={waterPipelineCoordinates}
                 options={{strokeColor: "#e60be6", //viền
                     strokeOpacity: 1,
                     strokeWeight: 2,}}
-            />
+            /> */}
             {/* Vị trí của tôi */}
             <MarkerF
                     position={{lat: myLat, lng: myLng}}
