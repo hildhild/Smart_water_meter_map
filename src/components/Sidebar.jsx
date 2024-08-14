@@ -77,6 +77,7 @@ function Sidebar() {
                 </select> */}
                 <Select
                     defaultValue={{value: "TP Hồ Chí Minh", label: "TP Hồ Chí Minh"}}
+                    value={{value: area, label: area}}
                     onChange={handleChangeArea}
                     styles={{control: (styles) => ({ ...styles, borderColor: '#2F85D6', borderRadius: "0px", '&:hover': {borderColor: 'blue'},}),}}
                     options={[

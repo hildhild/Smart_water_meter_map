@@ -1,4 +1,4 @@
-import { GoogleMap, useJsApiLoader, InfoWindowF, MarkerF, PolygonF, PolylineF } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, InfoWindowF, MarkerF, PolygonF, PolylineF, HeatmapLayer } from '@react-google-maps/api';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {geojson} from '../data/geojson';
 import { useSelector } from "react-redux";
@@ -38,7 +38,7 @@ function Map() {
     const { isLoaded } = useJsApiLoader({
         id: import.meta.env.VITE_GOOGLE_MAP_API_KEY,
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAP_API_KEY,
-        language: "vi"
+        language: "vi",
     })
     const handleMyPositon = () => {
         if (navigator.geolocation) {
