@@ -7,6 +7,7 @@ import { changeZoom, changeCenter } from '../redux/slices/MapSlice';
 import { changeArea } from '../redux/slices/AreaSlice';
 import { waterMeter as markers } from '../data/waterMeter';
 import Select from 'react-select';
+import { changeDistance, changePath, toggleMeasure } from '../redux/slices/MeasureSlice';
 
 // const waterPipelineCoordinates = [
 //     { lat: 10.800400, lng: 106.667789},
@@ -21,6 +22,20 @@ import Select from 'react-select';
 //     // Thêm các tọa độ khác nếu cần
 // ];
 
+function haversineDistance(latlng1, latlng2) {
+    const R = 6371; // Bán kính Trái Đất theo km
+    const dLat = (latlng2.lat - latlng1.lat) * (Math.PI / 180);
+    const dLng = (latlng2.lng - latlng1.lng) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(latlng1.lat * (Math.PI / 180)) *
+        Math.cos(latlng2.lat * (Math.PI / 180)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
 function Map() {
     const center = useSelector(state => state.map.center);
     const zoom = useSelector(state => state.map.zoom);
@@ -30,6 +45,9 @@ function Map() {
     const mapRef = useRef(null);
     const area = useSelector(state => state.area.area);
     const dispatch = useDispatch();
+    const measurePath = useSelector(state => state.measure.path);
+    const measure = useSelector(state => state.measure.measure);
+    const distance = useSelector(state => state.measure.distance);
 
     const { isLoaded } = useJsApiLoader({
         id: import.meta.env.VITE_GOOGLE_MAP_API_KEY,
@@ -118,6 +136,27 @@ function Map() {
         }
     } 
 
+    const handleMapClick = (event) => {
+        if (measure) {
+            const newPoint = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+            const newPath = [...measurePath, newPoint];
+            if (measurePath.length > 0) {
+                const lastPoint = measurePath[measurePath.length - 1];
+                const newDistance = haversineDistance(lastPoint, newPoint);
+                dispatch(changeDistance(distance + newDistance));
+            }
+            dispatch(changePath(newPath));
+        }
+    };
+
+    const handleMeasure = () => {
+        if (measure) {
+            dispatch(changePath([]));
+            dispatch(changeDistance(0));
+        }
+        dispatch(toggleMeasure());
+    }
+
     return isLoaded && (<div className='w-[100vw] md:w-[calc(100vw-350px)] h-[100vh] relative'>
         <GoogleMap
             mapContainerStyle={{
@@ -128,9 +167,12 @@ function Map() {
             zoom={zoom}
             onLoad={map => mapRef.current = map}
             onZoomChanged={handleZoomChanged}
+            onClick={handleMapClick}
         >
             {/* Phân vùng */}
             {
+                ! measure
+                &&
                 geojson 
                 &&
                 geojson.features.filter((feature => (feature.geometry.type == "Polygon" || feature.geometry.type == "MultiPolygon" ))).map((feature, index) => {
@@ -263,9 +305,15 @@ function Map() {
                     }}
             >
             </MarkerF>
+
+            <PolylineF path={measurePath} options={{strokeColor: "#0000FF", strokeOpacity: 1, strokeWeight: 2,}} />
         </GoogleMap>
         <button className='absolute right-[10px] top-[calc(100vh-250px)] bg-white hover:bg-gray-100 w-[40px] h-[40px] rounded-sm grid place-content-center hover:opacity-80' onClick={handleMyPositon}>
             <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" className='w-[30px] h-[30px]'/>
+        </button>
+        <button className='absolute right-[10px] top-[calc(100vh-300px)] bg-white hover:bg-gray-100 w-[40px] h-[40px] rounded-sm grid place-content-center hover:opacity-80' onClick={handleMeasure}>
+            <img src="https://cdn-icons-png.flaticon.com/512/1150/1150852.png" className='w-[30px] h-[30px]'/>
+            
         </button>
         <div className="absolute w-[200px] left-[10px] top-[10px] block md:hidden">
             <Select

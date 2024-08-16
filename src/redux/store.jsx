@@ -1,11 +1,13 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import areaReducer from './slices/AreaSlice';
-import MapReducer from './slices/MapSlice';
+import mapReducer from './slices/MapSlice';
+import measureReducer from './slices/MeasureSlice';
 
 
 const rootReducer = combineReducers({ 
     area: areaReducer, 
-    map: MapReducer,
+    map: mapReducer,
+    measure: measureReducer
 })
 
 
