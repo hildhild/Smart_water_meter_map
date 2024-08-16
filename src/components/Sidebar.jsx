@@ -6,12 +6,13 @@ import { changeCenter, changeZoom } from "../redux/slices/MapSlice";
 import { areaImage } from "../data/areaImage";
 import { waterMeter } from "../data/waterMeter";
 import Select from 'react-select';
-import { changeDistance, changePath } from "../redux/slices/MeasureSlice";
+import { changeValue, changePath, changeType } from "../redux/slices/MeasureSlice";
 
 function Sidebar() {
     const area = useSelector(state => state.area.area);
     const measure = useSelector(state => state.measure.measure);
-    const distance = useSelector(state => state.measure.distance);
+    const measureValue = useSelector(state => state.measure.value);
+    const measureType = useSelector(state => state.measure.type);
     const dispatch = useDispatch();
 
     const handleChangeArea = (e) => {
@@ -39,7 +40,13 @@ function Sidebar() {
 
     const handleResetPath = () => {
         dispatch(changePath([]));
-        dispatch(changeDistance(0));
+        dispatch(changeValue(0));
+    }
+
+    const handleChangeMeasureType = (e) => {
+        dispatch(changePath([]));
+        dispatch(changeValue(0));
+        dispatch(changeType(e.value));
     }
 
     return (
@@ -62,31 +69,6 @@ function Sidebar() {
                 <div>
                     <form className="w-full mb-[15px]">
                         <div className="text-[#2F85D6] py-[15px] font-semibold text-[14px]">Khu vực:</div>
-                        {/* <select name="area" id="area" className="w-full p-[8px] outline-none cursor-pointer border-[#2F85D6] border-[1px]" value={area} onChange={handleChangeArea}>
-                            <option value={"TP Hồ Chí Minh"}>TP Hồ Chí Minh</option>
-                            <option value={"Quận 1"}>Quận 1</option>
-                            <option value={"Quận 3"}>Quận 3</option>
-                            <option value={"Quận 4"}>Quận 4</option>
-                            <option value={"Quận 5"}>Quận 5</option>
-                            <option value={"Quận 6"}>Quận 6</option>
-                            <option value={"Quận 7"}>Quận 7</option>
-                            <option value={"Quận 8"}>Quận 8</option>
-                            <option value={"Quận 10"}>Quận 10</option>
-                            <option value={"Quận 11"}>Quận 11</option>
-                            <option value={"Quận 12"}>Quận 12</option>
-                            <option value={"Quận Tân Bình"}>Quận Tân Bình</option>
-                            <option value={"Quận Bình Tân"}>Quận Bình Tân</option>
-                            <option value={"Quận Bình Thạnh"}>Quận Bình Thạnh</option>
-                            <option value={"Quận Tân Phú"}>Quận Tân Phú</option>
-                            <option value={"Quận Gò Vấp"}>Quận Gò Vấp</option>
-                            <option value={"Quận Phú Nhuận"}>Quận Phú Nhuận</option>
-                            <option value={"Huyện Bình Chánh"}>Huyện Bình Chánh</option>
-                            <option value={"Huyện Hóc Môn"}>Huyện Hóc Môn</option>
-                            <option value={"Huyện Cần Giờ"}>Huyện Cần Giờ</option>
-                            <option value={"Huyện Củ Chi"}>Huyện Củ Chi</option>
-                            <option value={"Huyện Nhà Bè"}>Huyện Nhà Bè</option>
-                            <option value={"Thành phố Thủ Đức"}>Thành phố Thủ Đức</option>
-                        </select> */}
                         <Select
                             defaultValue={{value: "TP Hồ Chí Minh", label: "TP Hồ Chí Minh"}}
                             value={{value: area, label: area}}
@@ -140,18 +122,48 @@ function Sidebar() {
                 </div>
                 :
                 <div>
-                    <div className="text-[#2F85D6] py-[15px] font-semibold text-[14px]">Độ dài:</div>
-                    <table className="w-full bg-white border-[1px] border-[#2F85D6]">
-                        <tbody>
-                            <tr className="border-b-[1px] border-[#2F85D6]">
-                                <td className="px-[5px] border-r-[1px] border-[#2F85D6] w-[60%]">{(distance < 1) ? (distance*1000).toFixed(2) : distance.toFixed(2)} {(distance < 1) ? <p className="inline-block">m</p> : <p className="inline-block">km</p>}</td>
-                                <td className="px-[5px] border-r-[1px] border-[#2F85D6] w-[40%] text-center"><button className="font-semibold hover:text-[#FD573A]" onClick={handleResetPath}>Reset</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <form className="w-full mb-[15px]">
+                        <div className="text-[#2F85D6] py-[15px] font-semibold text-[14px]">Tùy chọn:</div>
+                        <Select
+                            defaultValue={{value: "Khoảng cách", label: "Khoảng cách"}}
+                            value={{value: measureType, label: measureType}}
+                            onChange={handleChangeMeasureType}
+                            styles={{control: (styles) => ({ ...styles, borderColor: '#2F85D6', borderRadius: "0px", '&:hover': {borderColor: 'blue'},}),}}
+                            options={[
+                                {value: "Khoảng cách", label: "Khoảng cách"},
+                                {value: "Diện tích", label: "Diện tích"},
+                            ]}
+                        />
+                    </form>
+                    {
+                        measureType == 'Khoảng cách'
+                        ?
+                        <div>
+                            <div className="text-[#2F85D6] py-[15px] font-semibold text-[14px]">Khoảng cách:</div>
+                            <table className="w-full bg-white border-[1px] border-[#2F85D6]">
+                                <tbody>
+                                    <tr className="border-b-[1px] border-[#2F85D6]">
+                                        <td className="px-[5px] border-r-[1px] border-[#2F85D6] w-[60%]">{(measureValue < 1) ? (measureValue*1000).toFixed(2) : measureValue.toFixed(2)} {(measureValue < 1) ? <p className="inline-block">m</p> : <p className="inline-block">km</p>}</td>
+                                        <td className="px-[5px] border-r-[1px] border-[#2F85D6] w-[40%] text-center"><button className="font-semibold hover:text-[#FD573A]" onClick={handleResetPath}>Reset</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        :
+                        <div>
+                            <div className="text-[#2F85D6] py-[15px] font-semibold text-[14px]">Diện tích:</div>
+                            <table className="w-full bg-white border-[1px] border-[#2F85D6]">
+                                <tbody>
+                                    <tr className="border-b-[1px] border-[#2F85D6]">
+                                        <td className="px-[5px] border-r-[1px] border-[#2F85D6] w-[60%]">{(measureValue < 1000000) ? (measureValue).toFixed(2) : (measureValue/1000000).toFixed(2)} {(measureValue < 1000000) ? <p className="inline-block">m<sup>2</sup></p> : <p className="inline-block">km<sup>2</sup></p>}</td>
+                                        <td className="px-[5px] border-r-[1px] border-[#2F85D6] w-[40%] text-center"><button className="font-semibold hover:text-[#FD573A]" onClick={handleResetPath}>Reset</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    }
                 </div>
             }
-            
         </div> 
     );
 }

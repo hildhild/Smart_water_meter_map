@@ -1,5 +1,5 @@
-import { GoogleMap, useJsApiLoader, InfoWindowF, MarkerF, PolygonF, PolylineF, HeatmapLayer } from '@react-google-maps/api';
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { GoogleMap, useJsApiLoader, InfoWindowF, MarkerF, PolygonF, PolylineF } from '@react-google-maps/api';
+import React, { useEffect, useState, useRef, useCallback, Fragment } from 'react';
 import {geojson} from '../data/geojson';
 import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux';
@@ -7,7 +7,7 @@ import { changeZoom, changeCenter } from '../redux/slices/MapSlice';
 import { changeArea } from '../redux/slices/AreaSlice';
 import { waterMeter as markers } from '../data/waterMeter';
 import Select from 'react-select';
-import { changeDistance, changePath, toggleMeasure } from '../redux/slices/MeasureSlice';
+import { changePath, changeType, changeValue, toggleMeasure } from '../redux/slices/MeasureSlice';
 
 // const waterPipelineCoordinates = [
 //     { lat: 10.800400, lng: 106.667789},
@@ -34,7 +34,7 @@ function haversineDistance(latlng1, latlng2) {
         Math.sin(dLng / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
-  }
+}
 
 function Map() {
     const center = useSelector(state => state.map.center);
@@ -47,7 +47,8 @@ function Map() {
     const dispatch = useDispatch();
     const measurePath = useSelector(state => state.measure.path);
     const measure = useSelector(state => state.measure.measure);
-    const distance = useSelector(state => state.measure.distance);
+    const measureValue = useSelector(state => state.measure.value);
+    const measureType = useSelector(state => state.measure.type);
 
     const { isLoaded } = useJsApiLoader({
         id: import.meta.env.VITE_GOOGLE_MAP_API_KEY,
@@ -140,19 +141,26 @@ function Map() {
         if (measure) {
             const newPoint = { lat: event.latLng.lat(), lng: event.latLng.lng() };
             const newPath = [...measurePath, newPoint];
-            if (measurePath.length > 0) {
-                const lastPoint = measurePath[measurePath.length - 1];
-                const newDistance = haversineDistance(lastPoint, newPoint);
-                dispatch(changeDistance(distance + newDistance));
+            if (measureType == 'Khoảng cách'){
+                if (measurePath.length > 0) {
+                    const lastPoint = measurePath[measurePath.length - 1];
+                    const newDistance = haversineDistance(lastPoint, newPoint);
+                    dispatch(changeValue(measureValue + newDistance));
+                }
             }
             dispatch(changePath(newPath));
+            if (measureType == 'Diện tích'){
+                const google = window.google;
+                dispatch(changeValue(google.maps.geometry.spherical.computeArea(newPath.map(coord => new google.maps.LatLng(coord.lat, coord.lng)))));
+            }
         }
     };
 
     const handleMeasure = () => {
         if (measure) {
+            dispatch(changeType("Khoảng cách"));
             dispatch(changePath([]));
-            dispatch(changeDistance(0));
+            dispatch(changeValue(0));
         }
         dispatch(toggleMeasure());
     }
@@ -305,8 +313,23 @@ function Map() {
                     }}
             >
             </MarkerF>
-
-            <PolylineF path={measurePath} options={{strokeColor: "#0000FF", strokeOpacity: 1, strokeWeight: 2,}} />
+            {
+                measure 
+                && 
+                (
+                measureType == 'Khoảng cách'
+                ?
+                <Fragment>
+                    {measurePath.map((path, index) => <MarkerF key={index} position={{lat: path.lat, lng: path.lng}} icon={{ url:"https://cdn-icons-png.flaticon.com/512/5632/5632543.png", scaledSize: { width: 20, height: 20 }}}/>)}
+                    <PolylineF path={measurePath} options={{strokeColor: "#0000FF", strokeOpacity: 1, strokeWeight: 2,}} />
+                </Fragment>
+                :
+                <Fragment>
+                    {measurePath.map((path, index) => <MarkerF key={index} position={{lat: path.lat, lng: path.lng}} icon={{ url:"https://cdn-icons-png.flaticon.com/512/5632/5632543.png", scaledSize: { width: 20, height: 20 }}}/>)}
+                    <PolygonF path={measurePath} options={{strokeColor: "#0000FF", strokeOpacity: 1, strokeWeight: 2,}} />
+                </Fragment>
+                )
+            }
         </GoogleMap>
         <button className='absolute right-[10px] top-[calc(100vh-250px)] bg-white hover:bg-gray-100 w-[40px] h-[40px] rounded-sm grid place-content-center hover:opacity-80' onClick={handleMyPositon}>
             <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" className='w-[30px] h-[30px]'/>
@@ -349,7 +372,6 @@ function Map() {
             />
         </div>
     </div>
-        
     )
 }
 
