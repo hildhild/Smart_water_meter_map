@@ -334,10 +334,18 @@ function Map() {
         <button className='absolute right-[10px] top-[calc(100vh-250px)] bg-white hover:bg-gray-100 w-[40px] h-[40px] rounded-sm grid place-content-center hover:opacity-80' onClick={handleMyPositon}>
             <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" className='w-[30px] h-[30px]'/>
         </button>
-        <button className='absolute right-[10px] top-[calc(100vh-300px)] bg-white hover:bg-gray-100 w-[40px] h-[40px] rounded-sm grid place-content-center hover:opacity-80' onClick={handleMeasure}>
-            <img src="https://cdn-icons-png.flaticon.com/512/1150/1150852.png" className='w-[30px] h-[30px]'/>
-            
-        </button>
+        {
+            measure
+            ?
+            <button className='absolute right-[10px] top-[calc(100vh-300px)] bg-white hover:bg-gray-100 w-[40px] h-[40px] rounded-sm grid place-content-center hover:opacity-80 border-[#FD573A] border-[4px] text-white' onClick={handleMeasure}>
+                <img src="https://cdn-icons-png.flaticon.com/512/1150/1150852.png" className='w-[30px] h-[30px]'/>
+            </button>
+            :
+            <button className='absolute right-[10px] top-[calc(100vh-300px)] bg-white hover:bg-gray-100 w-[40px] h-[40px] rounded-sm grid place-content-center hover:opacity-80' onClick={handleMeasure}>
+                <img src="https://cdn-icons-png.flaticon.com/512/1150/1150852.png" className='w-[30px] h-[30px]'/>
+            </button>
+        }
+        
         <div className="absolute w-[200px] left-[10px] top-[10px] block md:hidden">
             <Select
                 defaultValue={{value: "TP Hồ Chí Minh", label: "TP Hồ Chí Minh"}}

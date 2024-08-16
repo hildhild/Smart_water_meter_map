@@ -6,7 +6,7 @@ import { changeCenter, changeZoom } from "../redux/slices/MapSlice";
 import { areaImage } from "../data/areaImage";
 import { waterMeter } from "../data/waterMeter";
 import Select from 'react-select';
-import { changeValue, changePath, changeType } from "../redux/slices/MeasureSlice";
+import { changeValue, changePath, changeType, toggleMeasure } from "../redux/slices/MeasureSlice";
 
 function Sidebar() {
     const area = useSelector(state => state.area.area);
@@ -47,6 +47,15 @@ function Sidebar() {
         dispatch(changePath([]));
         dispatch(changeValue(0));
         dispatch(changeType(e.value));
+    }
+
+    const handleMeasure = () => {
+        if (measure) {
+            dispatch(changeType("Khoảng cách"));
+            dispatch(changePath([]));
+            dispatch(changeValue(0));
+        }
+        dispatch(toggleMeasure());
     }
 
     return (
@@ -162,6 +171,7 @@ function Sidebar() {
                             </table>
                         </div>
                     }
+                    <button className="font-semibold w-full bg-[#2F85D6] text-white mt-[30px] rounded-md p-[5px] hover:opacity-80" onClick={handleMeasure}>Thoát</button>
                 </div>
             }
         </div> 
