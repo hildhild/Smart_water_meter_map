@@ -1,3 +1,7 @@
+# Smart Water Meter Map - Bản đồ Đồng hồ nước thông minh (Địa bàn: TP Hồ Chí Minh)
+Link test: https://smart-water-meter-map.vercel.app/
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
