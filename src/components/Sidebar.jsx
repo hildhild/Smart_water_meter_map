@@ -131,6 +131,7 @@ function Sidebar() {
                 </div>
                 :
                 <div>
+                    <div className="text-[#FD573A] pt-[15px]"><strong>Hướng dẫn: </strong>Nhấp vào bản đồ để thêm vào con đường của bạn</div>
                     <form className="w-full mb-[15px]">
                         <div className="text-[#2F85D6] py-[15px] font-semibold text-[14px]">Tùy chọn:</div>
                         <Select
